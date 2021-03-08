@@ -1,0 +1,40 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Debug build with warnings",
+            "type": "shell",
+            "command": "g++",
+            "group": "build",
+            "presentation": {
+                "focus": true,
+                "clear": true
+            },
+            "problemMatcher": "$gcc",
+            "args": [
+                "-Wall",
+                "-Werror",
+                "-Wpedantic",
+                "-Wextra",
+                "-g",
+                "src/main.cpp",
+                "src/lib/*",
+                "-o",
+                "target/iso-rect-union"
+            ]
+        },
+        {
+            "label": "Run built file",
+            "command": "target/iso-rect-union",
+            "group": "test",
+            "dependsOn": [
+                "Debug build with warnings"
+            ],
+            "presentation": {
+                "focus": true,
+            }
+        }
+    ]
+}

@@ -19,8 +19,8 @@ std::vector<Rectangle> SetGenerator::real_rects(size_t n) {
     for (size_t i = 0; i < n; i++) {
         const double ulx = distrib(engine);
         const double lry = distrib(engine);
-        const double lrx = distrib(engine) + ulx + 1;
-        const double uly = distrib(engine) + lry + 1;
+        const double lrx = distrib(engine) + ulx + 0.0001;
+        const double uly = distrib(engine) + lry + 0.0001;
         rects.push_back(Rectangle{Point{ulx, uly}, Point{lrx, lry}});
     }
     return rects;

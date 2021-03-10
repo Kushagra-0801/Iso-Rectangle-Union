@@ -1,10 +1,11 @@
-#include <cstdint>
+#ifndef DAA_COMMON
+#define DAA_COMMON
 #include <string>
 
 class Point {
    public:
-    int32_t x, y;
-    Point(int32_t x1, int32_t y1) {
+    double x, y;
+    Point(double x1, double y1) {
         x = x1;
         y = y1;
     }
@@ -16,3 +17,4 @@ struct Rectangle {
 };
 
 std::string print_point(const Point &);
+#endif

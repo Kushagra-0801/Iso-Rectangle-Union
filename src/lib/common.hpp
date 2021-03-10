@@ -12,8 +12,8 @@ class Point {
 };
 
 struct Rectangle {
-    Point lower_left;
-    Point upper_right;
+    Point upper_left;
+    Point lower_right;
 };
 
 std::string print_point(const Point &);

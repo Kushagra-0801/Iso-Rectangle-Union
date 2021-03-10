@@ -10,4 +10,9 @@ class Point {
     }
 };
 
+struct Rectangle {
+    Point lower_left;
+    Point upper_right;
+};
+
 std::string print_point(const Point &);

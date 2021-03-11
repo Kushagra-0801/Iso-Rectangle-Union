@@ -6,8 +6,8 @@
 
 #include "common.hpp"
 
-const int32_t MIN_COORD = 0.0;
-const int32_t MAX_COORD = 100.0;
+const Coord MIN_COORD = 0;
+const Coord MAX_COORD = 100;
 
 class SetGenerator {
    private:
@@ -15,10 +15,10 @@ class SetGenerator {
     std::uniform_int_distribution<int32_t> distrib;
 
    public:
-    SetGenerator(int seed = 42, const int32_t min_coord = MIN_COORD,
-                 const int32_t max_coord = MAX_COORD) {
+    SetGenerator(int seed = 42, const Coord min_coord = MIN_COORD,
+                 const Coord max_coord = MAX_COORD) {
         engine.seed(seed);
-        distrib = std::uniform_int_distribution<int32_t>(min_coord, max_coord);
+        distrib = std::uniform_int_distribution<Coord>(min_coord, max_coord);
     }
     std::vector<Rectangle> rects(size_t n);
 };

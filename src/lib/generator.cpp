@@ -8,8 +8,7 @@ std::vector<Rectangle> SetGenerator::rects(size_t n) {
         const auto lry = distrib(engine);
         const auto lrx = distrib(engine) + ulx + 1;
         const auto uly = distrib(engine) + lry + 1;
-        rects.push_back(
-            Rectangle{Point<int32_t>{ulx, uly}, Point<int32_t>{lrx, lry}});
+        rects.push_back(Rectangle{Point{ulx, uly}, Point{lrx, lry}});
     }
     return rects;
 }

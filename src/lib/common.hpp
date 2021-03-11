@@ -2,6 +2,7 @@
 #define DAA_COMMON
 
 #include <array>
+#include <set>
 #include <string>
 
 typedef int32_t Coord;
@@ -9,12 +10,14 @@ typedef int32_t Coord;
 class Point {
    public:
     Coord x, y;
+    Point() = delete;
     Point(Coord x, Coord y) : x(x), y(y) {}
 };
 
 class Interval {
    public:
     Coord bot, top;
+    Interval() = delete;
     Interval(Coord bot, Coord top) : bot(bot), top(top) {}
 };
 
@@ -26,6 +29,7 @@ class Edge {
     EdgeType m_type;
 
    public:
+    Edge() = delete;
     Edge(Interval i, Coord c, EdgeType t)
         : m_interval(i), m_coord(c), m_type(t) {}
     Interval interval() const { return m_interval; }
@@ -33,19 +37,31 @@ class Edge {
     EdgeType type() const { return m_type; }
 };
 
+class Stripe {
+    Interval x_interval;
+    Interval y_interval;
+    std::set<Interval> x_union;
+};
+
 class Rectangle {
-    Point m_upper_left;
-    Point m_lower_right;
+    Coord m_xleft;
+    Coord m_ytop;
+    Coord m_xright;
+    Coord m_ybot;
 
    public:
-    Rectangle(Point ul, Point lr) : m_upper_left(ul), m_lower_right(lr) {}
+    Rectangle() = delete;
+    Rectangle(Point ul, Point lr)
+        : m_xleft(ul.x), m_ytop(ul.y), m_xright(lr.x), m_ybot(lr.y) {}
     Rectangle(Interval x_axis, Interval y_axis)
-        : m_upper_left({x_axis.bot, y_axis.top}),
-          m_lower_right({x_axis.top, y_axis.bot}) {}
-    Point upper_left() const { return m_upper_left; }
-    Point lower_right() const { return m_lower_right; }
-    Interval x_interval() const { return {m_upper_left.x, m_lower_right.x}; }
-    Interval y_interval() const { return {m_lower_right.y, m_upper_left.y}; }
+        : m_xleft(x_axis.bot),
+          m_ytop(y_axis.top),
+          m_xright(x_axis.top),
+          m_ybot(y_axis.bot) {}
+    Point upper_left() const { return {m_xleft, m_ytop}; }
+    Point lower_right() const { return {m_xright, m_ybot}; }
+    Interval x_interval() const { return {m_xleft, m_xright}; }
+    Interval y_interval() const { return {m_ybot, m_ytop}; }
     std::array<Edge, 4> into_edges() const;
 };
 

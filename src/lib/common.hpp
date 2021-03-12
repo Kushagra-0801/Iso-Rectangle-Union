@@ -1,13 +1,21 @@
-#include <cstdint>
+#ifndef DAA_COMMON
+#define DAA_COMMON
+
 #include <string>
 
+template <typename T>
 class Point {
    public:
-    int32_t x, y;
-    Point(int32_t x1, int32_t y1) {
+    T x, y;
+    Point(T x1, T y1) {
         x = x1;
         y = y1;
     }
 };
 
-std::string print_point(const Point &);
+struct Rectangle {
+    Point<int32_t> upper_left;
+    Point<int32_t> lower_right;
+};
+
+#endif

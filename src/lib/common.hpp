@@ -19,6 +19,7 @@ class Interval {
     Coord bot, top;
     Interval() = delete;
     Interval(Coord bot, Coord top) : bot(bot), top(top) {}
+    bool operator==(const Interval &i) const {return bot == i.bot && top == i.top;}
 };
 
 enum class EdgeType { Left, Top, Right, Bottom };
@@ -35,12 +36,18 @@ class Edge {
     Interval interval() const { return m_interval; }
     Coord coord() const { return m_coord; }
     EdgeType type() const { return m_type; }
+    bool operator<(const Edge &e) const {return m_coord < e.coord() || (m_type != e.type() && m_type == EdgeType::Left);}    // y_interval yet to complete 
 };
 
 class Stripe {
-    Interval x_interval;
-    Interval y_interval;
-    std::set<Interval> x_union;
+    public:
+    Interval m_x_interval;
+    Interval m_y_interval;
+    std::set<Interval> m_x_union;
+    Stripe(Interval x_ext, Interval y_ext) : m_x_interval(x_ext), m_y_interval(y_ext) {}
+    bool operator==(const Stripe &s) const {
+        return m_x_interval == s.m_x_interval && m_y_interval == s.m_y_interval && m_x_union == s.m_x_union;
+    }
 };
 
 class Rectangle {

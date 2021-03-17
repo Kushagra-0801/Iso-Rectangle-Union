@@ -14,6 +14,7 @@
             },
             "problemMatcher": "$gcc",
             "args": [
+                "-std=c++17",
                 "-Wall",
                 "-Werror",
                 "-Wpedantic",

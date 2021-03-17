@@ -2,7 +2,7 @@
 #define DAA_COMMON
 
 #include <array>
-#include <set>
+#include <vector>
 #include <string>
 
 typedef int32_t Coord;
@@ -22,6 +22,10 @@ class Interval {
     bool operator==(const Interval& i) const {
         return bot == i.bot && top == i.top;
     }
+    bool operator<(const Interval& i) const {
+        return bot < i.bot || (bot == i.bot && top < i.top);
+    }
+    bool is_subset_of(const Interval&) const;
 };
 
 enum class EdgeType { Left, Top, Right, Bottom };
@@ -48,13 +52,14 @@ class Stripe {
    public:
     Interval m_x_interval;
     Interval m_y_interval;
-    std::set<Interval> m_x_union;
+    std::vector<Interval> m_x_union;
     Stripe(Interval x_ext, Interval y_ext)
         : m_x_interval(x_ext), m_y_interval(y_ext) {}
     bool operator==(const Stripe& s) const {
         return m_x_interval == s.m_x_interval &&
                m_y_interval == s.m_y_interval && m_x_union == s.m_x_union;
     }
+    bool is_subset_of(const Stripe&) const;
 };
 
 class Rectangle {

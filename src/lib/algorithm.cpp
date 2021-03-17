@@ -8,8 +8,9 @@
 std::vector<Interval> partition(std::vector<Coord> &y) {
     sort(y.begin(), y.end());
     std::vector<Interval> res;
-    std::adjacent_difference(y.begin(), y.end(), std::back_inserter(res),
-                             [](auto a, auto b) { return Interval(a, b); });
+    for (size_t i = 1; i < y.size(); i++) {
+        res.push_back({y[i - 1], y[i]});
+    }
     return res;
 }
 
@@ -108,10 +109,8 @@ std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
 std::vector<Stripe> rectangle_dac(std::vector<Rectangle> &rects) {
     std::vector<Edge> vertical_edges;
     vertical_edges.reserve(2 * rects.size());
-    for (auto &&r : rects) {
+    for (auto &r : rects) {
         auto [left, top, right, bottom] = r.into_edges();
-        (void)top;
-        (void)bottom;
         vertical_edges.push_back(left);
         vertical_edges.push_back(right);
     }
@@ -136,9 +135,9 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
             Stripe s{x_ext, i};
             if (i == v[0].interval()) {
                 if (v[0].type() == EdgeType::Left) {
-                    s.m_x_union = {v[0].coord(), x_ext.top};
+                    s.m_x_union = {{v[0].coord(), x_ext.top}};
                 } else {
-                    s.m_x_union = {x_ext.bot, v[0].coord()};
+                    s.m_x_union = {{x_ext.bot, v[0].coord()}};
                 }
             }
             S.push_back(s);
@@ -162,7 +161,7 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
         // l = (l1 - lr) U l2;
         std::set_difference(l1.cbegin(), l1.cend(), lr.cbegin(), lr.cend(),
                             std::back_inserter(l_temp));
-        std::set_union(l_temp.begin(), l_temp.end(), l2.begin(), l2.end(),
+        std::set_union(l_temp.cbegin(), l_temp.cend(), l2.cbegin(), l2.cend(),
                        std::back_inserter(l));
 
         // r = r1 U (r2 - lr);
@@ -175,8 +174,8 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
         std::set_union(p1.cbegin(), p1.cend(), p2.cbegin(), p2.cend(),
                        std::back_inserter(p));
 
-        auto S_left = copy(s1, p, {x_ext.bot, x_m});
-        auto S_right = copy(s2, p, {x_m, x_ext.top});
+        auto S_left = copy(s1, p, {x_ext.bot, xm});
+        auto S_right = copy(s2, p, {xm, x_ext.top});
 
         blacken(S_left, r_temp);
         blacken(S_right, l_temp);

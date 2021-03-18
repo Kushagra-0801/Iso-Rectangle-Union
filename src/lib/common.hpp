@@ -2,8 +2,8 @@
 #define DAA_COMMON
 
 #include <array>
-#include <vector>
 #include <string>
+#include <vector>
 
 typedef int32_t Coord;
 
@@ -53,8 +53,9 @@ class Stripe {
     Interval m_x_interval;
     Interval m_y_interval;
     std::vector<Interval> m_x_union;
+    Coord x_measure;
     Stripe(Interval x_ext, Interval y_ext)
-        : m_x_interval(x_ext), m_y_interval(y_ext) {}
+        : m_x_interval(x_ext), m_y_interval(y_ext), x_measure(0) {}
     bool operator==(const Stripe& s) const {
         return m_x_interval == s.m_x_interval &&
                m_y_interval == s.m_y_interval && m_x_union == s.m_x_union;

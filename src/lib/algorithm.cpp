@@ -22,6 +22,7 @@ std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
         for (auto &s : S) {
             if (s_dash.is_subset_of(s)) {
                 s_dash.m_x_union = s.m_x_union;
+                s_dash.x_measure = s.x_measure;
             }
         }
         S_dash.push_back(s_dash);
@@ -34,6 +35,7 @@ void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
         for (auto i : J) {
             if (s.m_y_interval.is_subset_of(i)) {
                 s.m_x_union = {s.m_x_interval};
+                s.x_measure = s.m_x_interval.top - s.m_x_interval.bot;
             }
         }
     }
@@ -92,6 +94,7 @@ std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
                 for (auto s2 : S2) {
                     if (s2.m_y_interval == s.m_y_interval) {
                         s.m_x_union = concat_helper(s1.m_x_union, s2.m_x_union);
+                        s.x_measure = s1.x_measure + s2.x_measure;
                         flag = true;
                         break;
                     }
@@ -136,8 +139,10 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
             if (i == v[0].interval()) {
                 if (v[0].type() == EdgeType::Left) {
                     s.m_x_union = {{v[0].coord(), x_ext.top}};
+                    s.x_measure = x_ext.top - v[0].coord();
                 } else {
                     s.m_x_union = {{x_ext.bot, v[0].coord()}};
+                    s.x_measure = v[0].coord() - x_ext.bot;
                 }
             }
             S.push_back(s);
@@ -179,6 +184,8 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
 
         blacken(S_left, r_temp);
         blacken(S_right, l_temp);
+
+        S = concat(S_left, S_right, p, x_ext);
 
         return {l, r, p, S};
     }

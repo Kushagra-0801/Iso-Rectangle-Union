@@ -5,8 +5,8 @@
 #include <numeric>
 
 #include "common.hpp"
+
 std::vector<Interval> partition(std::vector<Coord> &y) {
-    sort(y.begin(), y.end());
     std::vector<Interval> res;
     for (size_t i = 1; i < y.size(); i++) {
         res.push_back({y[i - 1], y[i]});
@@ -35,7 +35,7 @@ void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
         for (auto i : J) {
             if (s.m_y_interval.is_subset_of(i)) {
                 s.x_measure = s.m_x_interval.top - s.m_x_interval.bot;
-                s.tree = std::nullopt;
+                s.tree = nullptr;
             }
         }
     }
@@ -52,15 +52,15 @@ std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
                 for (auto s2 : S2) {
                     if (s2.m_y_interval == s.m_y_interval) {
                         s.x_measure = s1.x_measure + s2.x_measure;
-                        if (s1.tree.has_value() && s2.tree.has_value()) {
-                            s.tree = {s1.m_x_interval.top, Lru::Undef,
-                                      &*s1.tree, &*s2.tree};
-                        } else if (s1.tree.has_value()) {
+                        if (s1.tree && s2.tree) {
+                            s.tree = new Ctree{s1.m_x_interval.top, Lru::Undef,
+                                               s1.tree, s2.tree};
+                        } else if (s1.tree) {
                             s.tree = s1.tree;
-                        } else if (s2.tree.has_value()) {
+                        } else if (s2.tree) {
                             s.tree = s2.tree;
                         } else {
-                            s.tree = std::nullopt;
+                            s.tree = nullptr;
                         }
                         flag = true;
                         break;
@@ -106,10 +106,10 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
             if (i == v[0].interval()) {
                 if (v[0].type() == EdgeType::Left) {
                     s.x_measure = x_ext.top - v[0].coord();
-                    s.tree = {v[0].coord(), Lru::Left, nullptr, nullptr};
+                    s.tree = new Ctree{v[0].coord(), Lru::Left};
                 } else {
                     s.x_measure = v[0].coord() - x_ext.bot;
-                    s.tree = {v[0].coord(), Lru::Right, nullptr, nullptr};
+                    s.tree = new Ctree{v[0].coord(), Lru::Right};
                 }
             }
             S.push_back(s);
@@ -177,8 +177,8 @@ void dfs(Ctree *tree, std::vector<Ctree> &leaves) {
 
 void contour_pieces(std::vector<Edge> &parts, Edge h, Stripe &s) {
     std::vector<Ctree> leaves;
-    if (s.tree.has_value()) {
-        dfs(&*s.tree, leaves);
+    if (s.tree) {
+        dfs(s.tree, leaves);
     }
     if (leaves.empty()) {
         parts.push_back(h);

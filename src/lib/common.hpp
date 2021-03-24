@@ -60,20 +60,20 @@ class Ctree {
 
     Ctree(Coord x, Lru side, Ctree* lson, Ctree* rson)
         : x(x), side(side), lson(lson), rson(rson) {}
+    Ctree(Coord x, Lru side) : x(x), side(side), lson(nullptr), rson(nullptr) {}
 };
 
 class Stripe {
    public:
     Interval m_x_interval;
     Interval m_y_interval;
-    std::optional<Ctree> tree;
+    Ctree* tree;
     Coord x_measure;
     Stripe(Interval x_ext, Interval y_ext)
         : m_x_interval(x_ext), m_y_interval(y_ext), x_measure(0) {}
     bool operator==(const Stripe& s) const {
         return m_x_interval == s.m_x_interval && m_y_interval == s.m_y_interval;
     }
-    bool is_subset_of(const Stripe&) const;
 };
 
 class Rectangle {

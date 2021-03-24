@@ -12,8 +12,8 @@ int main() {
         Rectangle{Point{0, 10}, Point{10, 0}},
         Rectangle{Point{10, 20}, Point{20, 10}},
         Rectangle{Point{20, 10}, Point{30, 0}},
-        Rectangle{Point{0, 31}, Point{10, 21}},
-        Rectangle{Point{20, 31}, Point{30, 21}},
+        Rectangle{Point{0, 30}, Point{10, 20}},
+        Rectangle{Point{20, 30}, Point{30, 20}},
     };
 
     for (auto &&r : rects) {

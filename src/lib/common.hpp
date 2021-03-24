@@ -2,6 +2,7 @@
 #define DAA_COMMON
 
 #include <array>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -48,17 +49,29 @@ class Edge {
     }  // y_interval yet to complete
 };
 
+enum class Lru { Left, Right, Undef };
+
+class Ctree {
+   public:
+    Coord x;
+    Lru side;
+    Ctree* lson;
+    Ctree* rson;
+
+    Ctree(Coord x, Lru side, Ctree* lson, Ctree* rson)
+        : x(x), side(side), lson(lson), rson(rson) {}
+};
+
 class Stripe {
    public:
     Interval m_x_interval;
     Interval m_y_interval;
-    std::vector<Interval> m_x_union;
+    std::optional<Ctree> tree;
     Coord x_measure;
     Stripe(Interval x_ext, Interval y_ext)
         : m_x_interval(x_ext), m_y_interval(y_ext), x_measure(0) {}
     bool operator==(const Stripe& s) const {
-        return m_x_interval == s.m_x_interval &&
-               m_y_interval == s.m_y_interval && m_x_union == s.m_x_union;
+        return m_x_interval == s.m_x_interval && m_y_interval == s.m_y_interval;
     }
     bool is_subset_of(const Stripe&) const;
 };

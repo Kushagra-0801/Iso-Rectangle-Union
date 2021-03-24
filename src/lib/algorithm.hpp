@@ -12,4 +12,8 @@ std::tuple<std::vector<Interval>, std::vector<Interval>, std::vector<Coord>,
            std::vector<Stripe>>
 stripes(std::vector<Edge>& v, Interval x_ext);
 
+Coord measure(std::vector<Stripe>&);
+
+std::vector<Edge> contour(std::vector<Rectangle>&, std::vector<Stripe>&);
+
 #endif

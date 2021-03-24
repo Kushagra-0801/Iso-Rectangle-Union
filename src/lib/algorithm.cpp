@@ -20,9 +20,9 @@ std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
     for (auto i : partition(P)) {
         Stripe s_dash{x_int, i};
         for (auto &s : S) {
-            if (s_dash.is_subset_of(s)) {
-                s_dash.m_x_union = s.m_x_union;
+            if (s_dash.m_y_interval.is_subset_of(s.m_y_interval)) {
                 s_dash.x_measure = s.x_measure;
+                s_dash.tree = s.tree;
             }
         }
         S_dash.push_back(s_dash);
@@ -34,53 +34,11 @@ void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
     for (auto &s : S) {
         for (auto i : J) {
             if (s.m_y_interval.is_subset_of(i)) {
-                s.m_x_union = {s.m_x_interval};
                 s.x_measure = s.m_x_interval.top - s.m_x_interval.bot;
+                s.tree = std::nullopt;
             }
         }
     }
-}
-
-std::vector<Interval> concat_helper(std::vector<Interval> &s1,
-                                    std::vector<Interval> &s2) {
-    auto is_adjacent = [](auto i, auto j) {
-        return j.top == i.bot || j.bot == i.top;
-    };
-    auto merge = [](auto i, auto j) -> Interval {
-        if (j.top == i.bot) {
-            return {j.bot, i.top};
-        } else {
-            return {i.bot, j.top};
-        }
-    };
-
-    std::vector<Interval> S;
-    auto it1 = s1.cbegin();
-    auto it1_end = s1.cend();
-    auto it2 = s2.cbegin();
-    auto it2_end = s2.cend();
-    while (it1 != it1_end && it2 != it2_end) {
-        if (is_adjacent(*it1, *it2)) {
-            S.push_back(merge(*it1, *it2));
-            it1++;
-            it2++;
-        } else if (*it1 < *it2) {
-            S.push_back(*it1);
-            it1++;
-        } else {
-            S.push_back(*it2);
-            it2++;
-        }
-    }
-    while (it1 != it1_end) {
-        S.push_back(*it1);
-        it1++;
-    }
-    while (it2 != it2_end) {
-        S.push_back(*it2);
-        it2++;
-    }
-    return S;
 }
 
 std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
@@ -93,8 +51,17 @@ std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
             if (s1.m_y_interval == s.m_y_interval) {
                 for (auto s2 : S2) {
                     if (s2.m_y_interval == s.m_y_interval) {
-                        s.m_x_union = concat_helper(s1.m_x_union, s2.m_x_union);
                         s.x_measure = s1.x_measure + s2.x_measure;
+                        if (s1.tree.has_value() && s2.tree.has_value()) {
+                            s.tree = {s1.m_x_interval.top, Lru::Undef,
+                                      &*s1.tree, &*s2.tree};
+                        } else if (s1.tree.has_value()) {
+                            s.tree = s1.tree;
+                        } else if (s2.tree.has_value()) {
+                            s.tree = s2.tree;
+                        } else {
+                            s.tree = std::nullopt;
+                        }
                         flag = true;
                         break;
                     }
@@ -138,11 +105,11 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
             Stripe s{x_ext, i};
             if (i == v[0].interval()) {
                 if (v[0].type() == EdgeType::Left) {
-                    s.m_x_union = {{v[0].coord(), x_ext.top}};
                     s.x_measure = x_ext.top - v[0].coord();
+                    s.tree = {v[0].coord(), Lru::Left, nullptr, nullptr};
                 } else {
-                    s.m_x_union = {{x_ext.bot, v[0].coord()}};
                     s.x_measure = v[0].coord() - x_ext.bot;
+                    s.tree = {v[0].coord(), Lru::Right, nullptr, nullptr};
                 }
             }
             S.push_back(s);
@@ -189,4 +156,64 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
 
         return {l, r, p, S};
     }
+}
+
+Coord measure(std::vector<Stripe> &S) {
+    Coord res = 0;
+    for (auto &s : S) {
+        res += s.x_measure * (s.m_y_interval.top - s.m_y_interval.bot);
+    }
+    return res;
+}
+
+void dfs(Ctree *tree, std::vector<Ctree> &leaves) {
+    if (tree->side == Lru::Undef) {
+        dfs(tree->lson, leaves);
+        dfs(tree->rson, leaves);
+    } else {
+        leaves.push_back(*tree);
+    }
+}
+
+void contour_pieces(std::vector<Edge> &parts, Edge h, Stripe &s) {
+    std::vector<Ctree> leaves;
+    if (s.tree.has_value()) {
+        dfs(&*s.tree, leaves);
+    }
+    if (leaves.empty()) {
+        parts.push_back(h);
+    } else {
+        auto iter = leaves.cbegin();
+        if (iter->side == Lru::Left && h.interval().bot < iter->x) {
+            parts.push_back({{h.interval().bot, iter->x}, h.coord(), h.type()});
+        }
+        iter++;
+        while (iter != leaves.cend()) {
+            if (auto prev = iter - 1;
+                prev->side == Lru::Right && iter->side == Lru::Left) {
+                parts.push_back({{prev->x, iter->x}, h.coord(), h.type()});
+            }
+            iter++;
+        }
+        iter--;
+        if (iter->side == Lru::Right && h.interval().top > iter->x) {
+            parts.push_back({{iter->x, h.interval().top}, h.coord(), h.type()});
+        }
+    }
+}
+
+std::vector<Edge> contour(std::vector<Rectangle> &rects,
+                          std::vector<Stripe> &S) {
+    std::vector<Edge> contour_parts;
+    for (auto &&r : rects) {
+        auto [left, top, right, bottom] = r.into_edges();
+        for (auto &s : S) {
+            if (s.m_y_interval.bot == top.coord()) {
+                contour_pieces(contour_parts, top, s);
+            } else if (s.m_y_interval.top == bottom.coord()) {
+                contour_pieces(contour_parts, bottom, s);
+            }
+        }
+    }
+    return contour_parts;
 }

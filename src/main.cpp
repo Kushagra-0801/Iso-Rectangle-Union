@@ -9,33 +9,32 @@ int main() {
     // const auto rects = gen.rects(5);
 
     std::vector<Rectangle> rects = {
-        Rectangle{Point{0, 10}, Point{10, 0}},
-        Rectangle{Point{10, 20}, Point{20, 10}},
-        Rectangle{Point{20, 10}, Point{30, 0}},
-        Rectangle{Point{0, 30}, Point{10, 20}},
-        Rectangle{Point{20, 30}, Point{30, 20}},
+        Rectangle{Point{0, 100}, Point{10, 0}},
+        Rectangle{Point{10, 200}, Point{20, 100}},
+        Rectangle{Point{20, 100}, Point{30, 0}},
+        Rectangle{Point{0, 300}, Point{10, 200}},
+        Rectangle{Point{20, 300}, Point{30, 200}},
     };
-    // std::vector<Rectangle> rects = {
-    //     // Rectangle{Point{0, 10}, Point{10, 0}},
-    //     Rectangle{Point{10, 20}, Point{20, 10}},
-    //     Rectangle{Point{0, 30}, Point{10, 20}},
-    //     Rectangle{Point{20, 30}, Point{30, 20}},
-    // };
-    for (auto &&r : rects) {
-        std::cout << r.upper_left().x << " " << r.upper_left().y << " : "
-                  << r.lower_right().x << " " << r.lower_right().y << std::endl;
-    }
     auto S = rectangle_dac(rects);
-    for (auto &s : S) {
-        std::cout << s.m_x_interval.bot << " " << s.m_x_interval.top << " : "
-                  << s.m_y_interval.bot << " : " << s.m_y_interval.top << " : "
-                  << s.x_measure << std::endl;
-    }
     auto m = measure(S);
     std::cout << "Measure: " << m << std::endl;
     std::cout << "Contour: [";
-    auto edges = contour(rects, S);
-    for (auto e : edges) {
+    auto hori_edges = contour(rects, S);
+    for (auto e : hori_edges) {
+        std::cout << "{" << e.coord() << ": " << e.interval().bot << ", "
+                  << e.interval().top << "}, ";
+    }
+    std::cout << "]" << std::endl;
+
+    for (auto &r : rects) {
+        r = Rectangle{r.y_interval(), r.x_interval()};
+    }
+    S = rectangle_dac(rects);
+    std::cout << "YOLO" << std::endl;
+    auto verti_edges = contour(rects, S);
+
+    std::cout << "Contour: [";
+    for (auto e : verti_edges) {
         std::cout << "{" << e.coord() << ": " << e.interval().bot << ", "
                   << e.interval().top << "}, ";
     }

@@ -1,7 +1,6 @@
 #include "algorithm.hpp"
 
 #include <algorithm>
-#include <iostream>
 #include <iterator>
 #include <numeric>
 
@@ -174,7 +173,6 @@ Lrps stripes(std::vector<Edge> &v, Interval x_ext) {
         Coord xm = (v[median].coord() +
                     std::max_element(v1.begin(), v1.end())->coord()) /
                    2;
-        std::cout << xm << std::endl;
         auto [l1, r1, p1, s1] = stripes(v1, {x_ext.bot, xm});
         auto [l2, r2, p2, s2] = stripes(v2, {xm, x_ext.top});
         std::vector<Interval> lr;
@@ -273,14 +271,11 @@ void contour_pieces(std::vector<Edge> &parts, Edge h, Stripe &s) {
     }
 }
 
-void add_vertical_lines(std::vector<Edge> &horis) {
-    if (horis.size() == 0) {
-    }
-}
-
 /**
  * Constructs the final contour, taking into consideration the overlap between
- * contour pieces
+ * contour pieces.
+ *
+ * Contour only contains the horizontal parts.
  *
  */
 std::vector<Edge> contour(std::vector<Rectangle> &rects,
@@ -301,7 +296,6 @@ std::vector<Edge> contour(std::vector<Rectangle> &rects,
             }
         }
     }
-    add_vertical_lines(contour_parts);
     return contour_parts;
 }
 

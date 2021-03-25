@@ -18,6 +18,11 @@
  * Assumes that `y` is sorted
  */
 std::vector<Interval> partition(std::vector<Coord> &y) {
+
+    /**
+     * @param y set of coordinates //TODO
+     */
+
     std::vector<Interval> res;
     for (size_t i = 1; i < y.size(); i++) {
         res.push_back({y[i - 1], y[i]});
@@ -32,7 +37,7 @@ std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
                          Interval x_int) {
 
     /**
-     * @param S set of stripes obtained from the ___ function
+     * @param S set of stripes obtained from the stripes function
      * @param P set of coordinates
      * @param x_int Interval containing the lower and upper bounds of y coordinate values
      */
@@ -52,12 +57,12 @@ std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
 }
 
 /**
- *
+ *  Blacken function to update the x_union fields of S_left and S_right
  */
 void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
 
     /**
-     * @param S set of stripes obtained from the ___ function
+     * @param S set of stripes obtained from the stripes function
      * @param J set of intervals
      */
 
@@ -78,12 +83,11 @@ std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
                            std::vector<Coord> &P, Interval x_int) {
 
     /**
-     * @param S1 set of stripes obtained from the ___ function
-     * @param S2 set of stripes obtained from the ___ function
+     * @param S1 set of stripes obtained from the stripes function
+     * @param S2 set of stripes obtained from the stripes function
      * @param x_int Interval containing the lower and upper bounds of y coordinate values
      * @param P set of coordinates against which stripes will be concatenated
      */
-
     
     std::vector<Stripe> S;
     for (auto i : partition(P)) {
@@ -151,6 +155,13 @@ typedef std::tuple<std::vector<Interval>, std::vector<Interval>,
 
 
 Lrps stripes(std::vector<Edge> &v, Interval x_ext) {
+
+    /**
+     * @param v set of vertical edges against which stripes has to be created
+     * @param x_ext min max bounds of y-coordinates of rectangles 
+     */
+
+
     std::vector<Interval> l, r;
     std::vector<Coord> p;
     std::vector<Stripe> S;
@@ -219,7 +230,16 @@ Lrps stripes(std::vector<Edge> &v, Interval x_ext) {
     }
 }
 
+/**
+ * Standard measure function, to calculate the total non-overlapping area of all the rectangles
+ */
+
 Coord measure(std::vector<Stripe> &S) {
+    
+    /**
+     * @param S set of stripes obtained from the stripes function
+     */
+
     Coord res = 0;
     for (auto &s : S) {
         res += s.x_measure * (s.m_y_interval.top - s.m_y_interval.bot);
@@ -250,7 +270,6 @@ void dfs(Ctree *tree, std::vector<Ctree> &leaves) {
 /**
  * Finds and returns all the contour pieces from the vector obtained through DFS
  */
-
 
 void contour_pieces(std::vector<Edge> &parts, Edge h, Stripe &s) {
 

@@ -34,7 +34,7 @@
                 "Debug build with warnings"
             ],
             "presentation": {
-                "focus": true,
+                "focus": true
             }
         },
         {
@@ -42,15 +42,28 @@
             "command": "doxygen-1.9.1/bin/doxygen",
             "group": "build",
             "presentation": {
-                "echo": false,
-                "reveal": "silent",
+                "focus": true
             },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
             "args": [
                 "Doxyfile"
-            ]
+            ],
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+)\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            }
         }
     ]
 }

@@ -1,11 +1,22 @@
 #include "algorithm.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <numeric>
 
 #include "common.hpp"
 
+/** \addtogroup Algorithm
+ * @{
+ */
+
+/**
+ * Finds partition in the set of coordinates such that for every partition
+ * found, no other coordinate falls in between them.
+ *
+ * Assumes that `y` is sorted
+ */
 std::vector<Interval> partition(std::vector<Coord> &y) {
     std::vector<Interval> res;
     for (size_t i = 1; i < y.size(); i++) {
@@ -14,6 +25,9 @@ std::vector<Interval> partition(std::vector<Coord> &y) {
     return res;
 }
 
+/**
+ * Create a copy of `S` based on set `P` containing all partition points.
+ */
 std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
                          Interval x_int) {
     std::vector<Stripe> S_dash;
@@ -30,6 +44,9 @@ std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
     return S_dash;
 }
 
+/**
+ *
+ */
 void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
     for (auto &s : S) {
         for (auto i : J) {
@@ -41,6 +58,9 @@ void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
     }
 }
 
+/**
+ * Concatenates the sets `S1` and `S2`, merging the adjacent intervals in both.
+ */
 std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
                            std::vector<Coord> &P, Interval x_int) {
     std::vector<Stripe> S;
@@ -76,6 +96,9 @@ std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
     return S;
 }
 
+/**
+ * Calculate the set of stripes from the set of rectangles `rects`
+ */
 std::vector<Stripe> rectangle_dac(std::vector<Rectangle> &rects) {
     std::vector<Edge> vertical_edges;
     vertical_edges.reserve(2 * rects.size());
@@ -88,9 +111,14 @@ std::vector<Stripe> rectangle_dac(std::vector<Rectangle> &rects) {
     return s;
 }
 
-std::tuple<std::vector<Interval>, std::vector<Interval>, std::vector<Coord>,
-           std::vector<Stripe>>
-stripes(std::vector<Edge> &v, Interval x_ext) {
+/**
+ * An alias for the return type of stripes()
+ */
+typedef std::tuple<std::vector<Interval>, std::vector<Interval>,
+                   std::vector<Coord>, std::vector<Stripe>>
+    Lrps;
+
+Lrps stripes(std::vector<Edge> &v, Interval x_ext) {
     std::vector<Interval> l, r;
     std::vector<Coord> p;
     std::vector<Stripe> S;
@@ -123,6 +151,7 @@ stripes(std::vector<Edge> &v, Interval x_ext) {
         Coord xm = (v[median].coord() +
                     std::max_element(v1.begin(), v1.end())->coord()) /
                    2;
+        std::cout << xm << std::endl;
         auto [l1, r1, p1, s1] = stripes(v1, {x_ext.bot, xm});
         auto [l2, r2, p2, s2] = stripes(v2, {xm, x_ext.top});
         std::vector<Interval> lr;
@@ -202,6 +231,11 @@ void contour_pieces(std::vector<Edge> &parts, Edge h, Stripe &s) {
     }
 }
 
+void add_vertical_lines(std::vector<Edge> &horis) {
+    if (horis.size() == 0) {
+    }
+}
+
 std::vector<Edge> contour(std::vector<Rectangle> &rects,
                           std::vector<Stripe> &S) {
     std::vector<Edge> contour_parts;
@@ -215,5 +249,8 @@ std::vector<Edge> contour(std::vector<Rectangle> &rects,
             }
         }
     }
+    add_vertical_lines(contour_parts);
     return contour_parts;
 }
+
+/**@}*/

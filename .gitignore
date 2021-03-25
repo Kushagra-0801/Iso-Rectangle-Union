@@ -58,3 +58,6 @@
 # Build Artifacts
 target/*
 doc/*
+
+# Extra
+extra/*

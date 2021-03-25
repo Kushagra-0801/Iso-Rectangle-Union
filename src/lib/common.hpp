@@ -106,8 +106,8 @@ class Edge {
      * Note: Assumes that both edges have vertical orientation.
      */
     bool operator<(const Edge& e) const {
-        return m_coord < e.coord() ||
-               (m_type != e.type() && m_type == EdgeType::Left);
+        return coord() < e.coord() ||
+               (coord() == e.coord() && type() == EdgeType::Left);
     }
 };
 

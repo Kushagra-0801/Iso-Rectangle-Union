@@ -76,5 +76,6 @@
         "typeindex": "cpp",
         "valarray": "cpp",
         "variant": "cpp"
-    }
+    },
+    "python.pythonPath": "/home/kush/.pyenv/versions/3.9.2/bin/python"
 }

@@ -30,11 +30,11 @@ std::vector<Interval> partition(std::vector<Coord> &y) {
  */
 std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
                          Interval x_int) {
-
     /**
      * @param S set of stripes obtained from the ___ function
      * @param P set of coordinates
-     * @param x_int Interval containing the lower and upper bounds of y coordinate values
+     * @param x_int Interval containing the lower and upper bounds of y
+     * coordinate values
      */
 
     std::vector<Stripe> S_dash;
@@ -53,14 +53,11 @@ std::vector<Stripe> copy(std::vector<Stripe> &S, std::vector<Coord> &P,
 
 /**
  *
+ *
+ * @param S set of stripes obtained from the ___ function
+ * @param J set of intervals
  */
 void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
-
-    /**
-     * @param S set of stripes obtained from the ___ function
-     * @param J set of intervals
-     */
-
     for (auto &s : S) {
         for (auto i : J) {
             if (s.m_y_interval.is_subset_of(i)) {
@@ -73,18 +70,14 @@ void blacken(std::vector<Stripe> &S, std::vector<Interval> &J) {
 
 /**
  * Concatenates the sets `S1` and `S2`, merging the adjacent intervals in both.
+ * @param S1 set of stripes obtained from the ___ function
+ * @param S2 set of stripes obtained from the ___ function
+ * @param x_int Interval containing the lower and upper bounds of y
+ * coordinate values
+ * @param P set of coordinates against which stripes will be concatenated
  */
 std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
                            std::vector<Coord> &P, Interval x_int) {
-
-    /**
-     * @param S1 set of stripes obtained from the ___ function
-     * @param S2 set of stripes obtained from the ___ function
-     * @param x_int Interval containing the lower and upper bounds of y coordinate values
-     * @param P set of coordinates against which stripes will be concatenated
-     */
-
-    
     std::vector<Stripe> S;
     for (auto i : partition(P)) {
         Stripe s{x_int, i};
@@ -122,7 +115,6 @@ std::vector<Stripe> concat(std::vector<Stripe> &S1, std::vector<Stripe> &S2,
  * Calculate the set of stripes from the set of rectangles `rects`
  */
 std::vector<Stripe> rectangle_dac(std::vector<Rectangle> &rects) {
-
     /**
      * @param rects set of rectangles passed in from input, to evaluate stripes
      */
@@ -146,10 +138,9 @@ typedef std::tuple<std::vector<Interval>, std::vector<Interval>,
     Lrps;
 
 /**
- * Standard stripes function, to calculate the set of stripes formed from the given set of rectangles
+ * Standard stripes function, to calculate the set of stripes formed from the
+ * given set of rectangles
  */
-
-
 Lrps stripes(std::vector<Edge> &v, Interval x_ext) {
     std::vector<Interval> l, r;
     std::vector<Coord> p;
@@ -228,13 +219,12 @@ Coord measure(std::vector<Stripe> &S) {
 }
 
 /**
- * Function would give a Depth First search traversal order of the CTree passed in as a parameter
- * 
+ * Function would give a Depth First search traversal order of the CTree passed
+ * in as a parameter
+ *
  */
-
 void dfs(Ctree *tree, std::vector<Ctree> &leaves) {
-
-     /**
+    /**
      * @param tree Ctree object which is being traversed
      * @param leaves vector of Ctree nodes after DFS
      */
@@ -250,14 +240,11 @@ void dfs(Ctree *tree, std::vector<Ctree> &leaves) {
 /**
  * Finds and returns all the contour pieces from the vector obtained through DFS
  */
-
-
 void contour_pieces(std::vector<Edge> &parts, Edge h, Stripe &s) {
-
-     /**
+    /**
      * @param parts set of rectangles passed in from input, to evaluate stripes
      * @param h set of stripes obtained using the stripes function
-     * @param s 
+     * @param s
      */
 
     std::vector<Ctree> leaves;
@@ -292,13 +279,13 @@ void add_vertical_lines(std::vector<Edge> &horis) {
 }
 
 /**
- * Constructs the final contour, taking into consideration the overlap between contour pieces
- * 
+ * Constructs the final contour, taking into consideration the overlap between
+ * contour pieces
+ *
  */
 std::vector<Edge> contour(std::vector<Rectangle> &rects,
                           std::vector<Stripe> &S) {
-    
-      /**
+    /**
      * @param rects set of rectangles passed in from input, to evaluate stripes
      * @param S set of stripes obtained using the stripes function
      */

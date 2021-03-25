@@ -36,6 +36,21 @@
             "presentation": {
                 "focus": true,
             }
+        },
+        {
+            "label": "Build Docs",
+            "command": "doxygen-1.9.1/bin/doxygen",
+            "group": "build",
+            "presentation": {
+                "echo": false,
+                "reveal": "silent",
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "args": [
+                "Doxyfile"
+            ]
         }
     ]
 }

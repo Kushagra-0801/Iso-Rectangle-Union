@@ -57,3 +57,4 @@
 
 # Build Artifacts
 target/*
+doc/*

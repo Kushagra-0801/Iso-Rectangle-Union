@@ -6,6 +6,9 @@
 
 #include "common.hpp"
 
+const Coord NEW_INT_MIN = INT32_MIN + 5;
+const Coord NEW_INT_MAX = INT32_MAX - 5;
+
 /** \addtogroup Algorithm
  * @{
  */
@@ -125,7 +128,7 @@ std::vector<Stripe> rectangle_dac(std::vector<Rectangle> &rects) {
         vertical_edges.push_back(left);
         vertical_edges.push_back(right);
     }
-    auto [l, r, p, s] = stripes(vertical_edges, {INT32_MIN, INT32_MAX});
+    auto [l, r, p, s] = stripes(vertical_edges, {NEW_INT_MIN, NEW_INT_MAX});
     return s;
 }
 
@@ -150,7 +153,8 @@ Lrps stripes(std::vector<Edge> &v, Interval x_ext) {
         } else {
             r = {v[0].interval()};
         }
-        p = {INT32_MIN, v[0].interval().bot, v[0].interval().top, INT32_MAX};
+        p = {NEW_INT_MIN, v[0].interval().bot, v[0].interval().top,
+             NEW_INT_MAX};
         for (auto i : partition(p)) {
             Stripe s{x_ext, i};
             if (i == v[0].interval()) {
